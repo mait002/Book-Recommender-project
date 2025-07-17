@@ -11,12 +11,12 @@ import gradio as gr
 
 load_dotenv()
 
-books = pd.read_csv("../data/books_with_emotions.csv")
+books = pd.read_csv("app/books_with_emotions.csv")
 
 books["large_thumbnail"] = books["thumbnail"] + "&fife=w800"
-books["large_thumbnail"] = np.where(books["large_thumbnail"].isna(), "../assets/cover-not-found.jpeg", books["large_thumbnail"])
+books["large_thumbnail"] = np.where(books["large_thumbnail"].isna(), "assets/cover-not-found.jpeg", books["large_thumbnail"])
 
-raw_documents = TextLoader("tagged_descriptions.txt").load()
+raw_documents = TextLoader("data/tagged_descriptions.txt").load()
 text_splitter = CharacterTextSplitter(separator="\n", chunk_size=0, chunk_overlap=0)
 documents = text_splitter.split_documents(raw_documents)
 db_books = Chroma.from_documents(documents, OpenAIEmbeddings())
