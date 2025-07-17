@@ -1,0 +1,23 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Clone Repo') {
+            steps {
+                git 'https://github.com/mait002/Book-Recommender.git'
+            }
+        }
+
+        stage('Install Ansible') {
+            steps {
+                sh 'sudo apt-get update && sudo apt-get install -y ansible'
+            }
+        }
+
+        stage('Deploy App with Ansible') {
+            steps {
+                sh 'ansible-playbook -i ansible/hosts.ini ansible/playbook.yml'
+            }
+        }
+    }
+}

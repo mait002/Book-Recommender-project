@@ -1,0 +1,30 @@
+# created by virtualenv automatically
+# Byte-compiled files
+__pycache__/
+*.py[cod]
+*.so
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Environment files
+.env
+.venv/
+*.env
+
+# Secrets / Keys
+book-recommender-key.pem
+
+# OS metadata files
+.DS_Store
+
+# Logs
+*.log
+
+# VSCode or PyCharm files (optional)
+.vscode/
+.idea/
+
+# Cache
+.cache/
+
