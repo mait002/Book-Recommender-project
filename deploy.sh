@@ -35,7 +35,7 @@ source venv/bin/activate
 pip install --upgrade pip
 
 # Install requirements
-pip install -r requirements.txt
+#pip install -r requirements.txt
 
 # Kill any existing app instance
 pkill -f gradio-dashboard.py || true
