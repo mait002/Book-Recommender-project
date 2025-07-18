@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 from dotenv import  load_dotenv
+import os
 
 from langchain_community.document_loaders import TextLoader
 from langchain_openai import OpenAIEmbeddings
