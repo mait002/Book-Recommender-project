@@ -11,6 +11,9 @@ from langchain_chroma import Chroma
 
 import gradio as gr
 
+print("OPENAI_API_KEY length:", len(os.environ.get("OPENAI_API_KEY", "")))
+
+
 if "OPENAI_API_KEY" not in os.environ:
     raise ValueError("OPENAI_API_KEY environment variable is not set.")
 
@@ -19,7 +22,7 @@ if "HUGGINGFACEHUB_API_TOEKN" not in os.environ:
 
 
 
-#load_dotenv()
+
 
 books = pd.read_csv("app/books_with_emotions.csv")
 
