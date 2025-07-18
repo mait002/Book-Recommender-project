@@ -25,7 +25,16 @@
         path: "{{ app_dir }}"
         state: directory
         owner: ubuntu
-        mode: 0755
+        group: ubuntu
+        mode: '0755'
+
+    - name: Generate .env file from secrets
+      template:
+        src: env.j2
+        dest: "{{ app_dir }}/.env"
+        owner: ubuntu
+        group: ubuntu
+        mode: '0600'
 
     - name: Copy app files to EC2
       synchronize:
@@ -44,14 +53,30 @@
         requirements: "{{ app_dir }}/requirements.txt"
         virtualenv: "{{ venv_dir }}"
 
-    - name: Run Gradio app (background)
+    - name: Kill any existing Gradio processes
       shell: |
-        nohup {{ venv_dir }}/bin/python3 {{ app_dir }}/gradio-dashboard.py > gradio.log 2>&1 &
+        pkill -f gradio-dashboard.py || true
+
+    - name: Run Gradio app in background
+      shell: |
+        set -o allexport
+        source .env
+        set +o allexport
+        nohup {{ venv_dir }}/bin/python3 {{ app_dir }}/gradio-dashboard.py > {{ app_dir }}/gradio.log 2>&1 &
       args:
         chdir: "{{ app_dir }}"
 
-    - name: Generate .env from secrets
-      template:
-        src: env.j2
-        dest: "{{ app_dir }}/.env"
-        mode: '0600'
+    - name: Wait for Gradio app to start
+      wait_for:
+        port: 7860
+        delay: 5
+        timeout: 60
+        state: started
+
+    - name: Check if Gradio is running
+      shell: pgrep -f gradio-dashboard.py
+      register: gradio_pid
+      ignore_errors: true
+
+    - debug:
+        var: gradio_pid.stdout

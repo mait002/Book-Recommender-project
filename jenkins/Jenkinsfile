@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    environment {
+        VAULT_PASSWORD_FILE = "vault_pass.txt"
+    }
+
     stages {
         stage('Clone Repo') {
             steps {
@@ -10,13 +14,20 @@ pipeline {
 
         stage('Install Ansible') {
             steps {
-                sh 'sudo apt-get update && sudo apt-get install -y ansible'
+                sh '''
+                    sudo apt-get update
+                    sudo apt-get install -y ansible
+                '''
             }
         }
 
-        stage('Deploy App with Ansible') {
+        stage('Run Ansible Playbook') {
             steps {
-                sh 'ansible-playbook -i ansible/hosts.ini ansible/playbook.yml'
+                sh '''
+                    ansible-playbook ansible/playbook.yml \
+                        -i ansible/hosts.ini \
+                        --vault-password-file $VAULT_PASSWORD_FILE
+                '''
             }
         }
     }
