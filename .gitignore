@@ -28,3 +28,4 @@ book-recommender-key.pem
 # Cache
 .cache/
 
+test.py
