@@ -1,7 +1,8 @@
+import os
 import pandas as pd
 import numpy as np
-from dotenv import  load_dotenv
-import os
+#from dotenv import  load_dotenv
+
 
 from langchain_community.document_loaders import TextLoader
 from langchain_openai import OpenAIEmbeddings
@@ -10,7 +11,15 @@ from langchain_chroma import Chroma
 
 import gradio as gr
 
-load_dotenv()
+if "OPENAI_API_KEY" not in os.environ:
+    raise ValueError("OPENAI_API_KEY environment variable is not set.")
+
+if "HUGGINGFACEHUB_API_TOEKN" not in os.environ:
+    raise ValueError("HUGGINGFACEHUB_API_TOEKN environment variable is not set.")
+
+
+
+#load_dotenv()
 
 books = pd.read_csv("app/books_with_emotions.csv")
 
@@ -20,6 +29,7 @@ books["large_thumbnail"] = np.where(books["large_thumbnail"].isna(), "assets/cov
 raw_documents = TextLoader("data/tagged_descriptions.txt").load()
 text_splitter = CharacterTextSplitter(separator="\n", chunk_size=0, chunk_overlap=0)
 documents = text_splitter.split_documents(raw_documents)
+
 db_books = Chroma.from_documents(documents, OpenAIEmbeddings())
 
 def retrieve_semantic_recommendations(
