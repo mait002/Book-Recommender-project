@@ -43,6 +43,6 @@ pkill -f gradio-dashboard.py || true
 
 # Run the app in the background
 cd /var/lib/jenkins/workspace/Book-recommender/app
-nohup ../venv/bin/python gradio-dashboard.py > ../gradio.log 2>&1 &
+nohup ../venv/bin/python3 gradio-dashboard.py > ../gradio.log 2>&1 &
 
 echo "✅ Deployment complete. Logs at gradio.log"
