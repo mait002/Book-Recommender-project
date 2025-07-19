@@ -1,34 +1,37 @@
 pipeline {
+
     agent any
 
     environment {
-        VAULT_PASSWORD_FILE = "vault_pass.txt"
+        VAULT_PASS = credentials('vault-pass')
     }
 
-    stages {
-        stage('Clone Repo') {
-            steps {
-                git 'https://github.com/mait002/Book-Recommender.git'
-            }
+    stages('Clone Repo') {
+        steps {
+            git 'https://github.com/mait002/Book-Recommender.git'
         }
+    }
 
-        stage('Install Ansible') {
-            steps {
-                sh '''
-                    sudo apt-get update
-                    sudo apt-get install -y ansible
-                '''
-            }
+    stage('Install Ansible') {
+        steps {
+            sh 'sudo apt-get update && sudo apt-get install -y ansible'
         }
+    }
 
-        stage('Run Ansible Playbook') {
-            steps {
-                sh '''
-                    ansible-playbook ansible/playbook.yml \
-                        -i ansible/hosts.ini \
-                        --vault-password-file $VAULT_PASSWORD_FILE
-                '''
-            }
+    stage('Run Ansible Playbook') {
+        steps {
+            //write vault password to temp file
+            writeFile file: 'vault_pass.txt', text: "${env.VAULT_PASS}"
+
+            //Run playbook
+            sh '''ansible-playbook -i ansible/hosts.ini ansible/playbook.yml \ --vault-password-file vault_pass.txt'''
         }
+    }
+
+}
+
+post {
+    cleanup {
+        sh 'rm -f vault_pass.txt'
     }
 }
